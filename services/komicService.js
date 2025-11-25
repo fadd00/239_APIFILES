@@ -1,12 +1,12 @@
 async function createKomik(database, komikData) {
-    const { title, description, author, imageType, imageName, imageData } = komikData;
+    const { tittle, description, author, imageType, imageName, imageData } = komikData;
 
-    if (!title || !description || !author) {
+    if (!tittle || !description || !author) {
         throw new Error('Title, description, dan author wajib diisi');
     }
 
     const newKomik = await database.Komik.create({
-        title,
+        tittle,
         description,
         author,
         imageType: imageType || null,
@@ -14,7 +14,14 @@ async function createKomik(database, komikData) {
         imageData: imageData || null,
     });
 
-    return newKomik;
+    // Reload to get the instance with default values if any, 
+    // but more importantly, let's return a safe object without the huge image buffer
+    const result = newKomik.toJSON();
+    if (result.imageData) {
+        result.imageData = "Image uploaded successfully"; // Don't send the raw buffer back
+    }
+
+    return result;
 }
 
 async function getAllKomik(database) {
