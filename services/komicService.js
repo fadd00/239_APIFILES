@@ -1,5 +1,11 @@
 async function createKomik(database, komikData) {
-    const { tittle, description, author, imageType, imageName, imageData } = komikData;
+    // Handle potential typo in DB schema: allow 'title' from input to map to 'tittle'
+    let { tittle, title, description, author, imageType, imageName, imageData } = komikData;
+
+    // If tittle is missing but title is present, use title
+    if (!tittle && title) {
+        tittle = title;
+    }
 
     if (!tittle || !description || !author) {
         throw new Error('Title, description, dan author wajib diisi');
